@@ -74,7 +74,7 @@
             if (fileData == null) throw new ArgumentException("No data");
             if (fileData.Length <= 1) throw new ArgumentException("No data");
 
-            byte[] BMPSignature = { 77, 66 };
+            byte[] BMPSignature = { 66, 77 };
 
             for (int i = 0; i < BMPSignature.Length; i++)
             {

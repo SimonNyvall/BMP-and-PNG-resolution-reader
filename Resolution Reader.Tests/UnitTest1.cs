@@ -34,7 +34,7 @@ namespace Resolution_Reader.Tests
         [Fact]
         public void SearchForBMPSignature_TestNormal()
         {
-            byte[] BMPSignature = { 77, 66 };
+            byte[] BMPSignature = { 66, 77 };
 
             bool actual = Program.SearchForBMPSignature(BMPSignature);
 
