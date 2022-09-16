@@ -1,6 +1,6 @@
 ﻿namespace BMP_and_PNG_resolution_reader
 {
-    internal class Program
+    public class Program
     {        
         static void Main(string[] args)
         {
@@ -10,34 +10,36 @@
 
             if (SearchForPNGSignature(fileData))
             {
-                byte resolution = fileData[19];
-                byte overflowValueResolution = fileData[18];
+                byte resolutionWidth = fileData[19];
+                byte overflowValueResolutionWidth = fileData[18];     
 
-                PrintResolutionOfImageFile(resolution, overflowValueResolution);
+                byte resolutionHeigth = fileData[23];
+                byte overflowValueResolutionHeigth = fileData[22];
 
-                resolution = fileData[23];
-                overflowValueResolution = fileData[22];
+                int width = overflowValueResolutionWidth * 256 + resolutionWidth;
+                int heigth = overflowValueResolutionHeigth * 256 + resolutionHeigth;
 
-                PrintResolutionOfImageFile(resolution, overflowValueResolution);
+                PrintResolutionOfImageFile(width, heigth);
             }
             else if (SearchForBMPSignature(fileData))
             {
-                byte resolution = fileData[18];
-                byte overflowValueResolution = fileData[19];
+                byte resolutionWidth = fileData[18];
+                byte overflowValueResolutionWidth = fileData[19];
+               
+                byte resolutionHeigth = fileData[22];
+                byte overflowValueResolutionHeigth = fileData[23];
 
-                PrintResolutionOfImageFile(resolution, overflowValueResolution);
+                int width = overflowValueResolutionWidth * 256 + resolutionWidth;
+                int heigth = overflowValueResolutionHeigth * 256 + resolutionHeigth;
 
-                resolution = fileData[22];
-                overflowValueResolution = fileData[23];
-
-                PrintResolutionOfImageFile(resolution, overflowValueResolution);
+                PrintResolutionOfImageFile(width, heigth);
             }
             else
             {
                 Console.WriteLine("File is invalid.");
             }
         }
-        private static byte[] GetByteArrayFromFile(string path)
+        public static byte[] GetByteArrayFromFile(string path)
         {
             if (string.IsNullOrEmpty(path)) throw new ArgumentException("Null or empty", path);
             using (var dataStream = new FileStream(path, FileMode.Open))
@@ -52,8 +54,11 @@
             }            
         }
 
-        private static bool SearchForPNGSignature(byte[] fileData)
+        public static bool SearchForPNGSignature(byte[] fileData)
         {
+            if (fileData == null) throw new ArgumentException("No data");
+            if (fileData.Length <= 1) throw new ArgumentException("No data");
+
             byte[] PNGSignature = { 137, 80, 78, 71, 13, 10, 26, 10 };
 
             for (int i = 0; i < 8; i++)
@@ -64,8 +69,11 @@
             return true;
         }
 
-        private static bool SearchForBMPSignature(byte[] fileData)
+        public static bool SearchForBMPSignature(byte[] fileData)
         {
+            if (fileData == null) throw new ArgumentException("No data");
+            if (fileData.Length <= 1) throw new ArgumentException("No data");
+
             byte[] BMPSignature = { 77, 66 };
 
             for (int i = 0; i < BMPSignature.Length; i++)
@@ -78,10 +86,9 @@
             return true;
         }
 
-        private static void PrintResolutionOfImageFile(byte resolution, byte overflowValueResolution)
-        {
-            int length = overflowValueResolution * 256 + resolution;
-            Console.Write($"{length} ");
+        private static void PrintResolutionOfImageFile(int pixelWidth, int pixelHeight)
+        {            
+            Console.Write($"{pixelWidth}x{pixelHeight}");
         }
     }
 }
